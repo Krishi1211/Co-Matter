@@ -1,9 +1,9 @@
 import { BarChart3 } from 'lucide-react';
 import { useState } from 'react';
-import riceHullImage from '@/assets/778ce8d7e7458b29c8b7b6338849ea9eb2bc2b62.png';
-import almondHullImage from '@/assets/3ce99955368dc43f6157b6afac5a5c0e70bd8753.png';
-import legumeImage from '@/assets/a62077d60c42b8135b9d4c9538422c728dfac4f0.png';
-import pistachioShellImage from '@/assets/a76fb365fb93eeec8b52d2dccbe4a97f87fb404a.png';
+import riceHullImage from '../../assets/ricehull.png';
+import almondHullImage from '../../assets/3ce99955368dc43f6157b6afac5a5c0e70bd8753.png';
+import legumeImage from '../../assets/a62077d60c42b8135b9d4c9538422c728dfac4f0.png';
+import pistachioShellImage from '../../assets/a76fb365fb93eeec8b52d2dccbe4a97f87fb404a.png';
 
 export function WasteLandscape() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
