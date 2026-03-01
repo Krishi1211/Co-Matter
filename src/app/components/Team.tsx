@@ -1,10 +1,10 @@
 import { GraduationCap, Mail, Linkedin } from 'lucide-react';
-import garyImage from 'figma:asset/a3018ee86ddaeaf88bfad164c14ad148f275b113.png';
-import elenaImage from 'figma:asset/09d0a21d77d05296d1ecc134d7cbfe22f8b5efbd.png';
-import samjhanaImage from 'figma:asset/9b5cb8700e2192707ed4519a16af5a1930d49c69.png';
-import ellieImage from 'figma:asset/a75806b1b5432b607e638bceed7e93a32f413599.png';
-import navyaImage from 'figma:asset/823fadad5ae789ab35fcddbb5f5aae44eff1dd3a.png';
-import krishiImage from 'figma:asset/dcd7f015d3889e65ff22de9b01fd02a855c6db95.png';
+import garyImage from '@/assets/a3018ee86ddaeaf88bfad164c14ad148f275b113.png';
+import elenaImage from '@/assets/09d0a21d77d05296d1ecc134d7cbfe22f8b5efbd.png';
+import samjhanaImage from '@/assets/9b5cb8700e2192707ed4519a16af5a1930d49c69.png';
+import ellieImage from '@/assets/a75806b1b5432b607e638bceed7e93a32f413599.png';
+import navyaImage from '@/assets/823fadad5ae789ab35fcddbb5f5aae44eff1dd3a.png';
+import krishiImage from '@/assets/dcd7f015d3889e65ff22de9b01fd02a855c6db95.png';
 
 export function Team() {
   const teamMembers = [

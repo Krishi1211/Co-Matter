@@ -1,5 +1,5 @@
 import { Search, SlidersHorizontal, MapPin, TrendingUp, FileText, DollarSign, AlertCircle, Lightbulb } from 'lucide-react';
-import supplierToBuyerMap from 'figma:asset/f061986e163e3cef3c65e55444839d722d71b185.png';
+import supplierToBuyerMap from '@/assets/f061986e163e3cef3c65e55444839d722d71b185.png';
 
 export function PrototypePreview() {
   return (
