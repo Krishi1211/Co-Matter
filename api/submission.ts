@@ -1,10 +1,21 @@
-import 'dotenv/config';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createPool } from '@neondatabase/serverless';
+import { createPool, Pool } from '@neondatabase/serverless';
 
 // NOTE: Set `DATABASE_URL` in Vercel environment variables to your Neon connection string.
 // If you want, you can also set `NEON_DATABASE_URL` and mirror it into `DATABASE_URL`.
-const pool = createPool(process.env.DATABASE_URL ?? process.env.NEON_DATABASE_URL ?? '');
+function getPool(): Pool {
+  const connectionString = process.env.DATABASE_URL ?? process.env.NEON_DATABASE_URL;
+  if (!connectionString) {
+    throw new Error('Missing DATABASE_URL / NEON_DATABASE_URL env var. Please set it in Vercel.');
+  }
+  return createPool(connectionString);
+}
+
+let pool: Pool | null = null;
+function getOrCreatePool() {
+  if (!pool) pool = getPool();
+  return pool;
+}
 
 const CREATE_TABLE_SQL = `
 CREATE TABLE IF NOT EXISTS submissions (
@@ -25,7 +36,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 `;
 
 async function ensureTableExists() {
-  await pool.query(CREATE_TABLE_SQL);
+  await getOrCreatePool().query(CREATE_TABLE_SQL);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -61,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ? body.segmentInterest.split(',').map((v) => v.trim())
       : [];
 
-    await pool.query(
+    await getOrCreatePool().query(
       `INSERT INTO submissions (
           first_name,
           last_name,
