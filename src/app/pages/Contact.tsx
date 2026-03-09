@@ -17,25 +17,49 @@ export function Contact() {
     privacyAcknowledged: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Create mailto link with form data
-    const subject = encodeURIComponent(formData.subject || 'Co▪Matter Platform Inquiry');
-    const body = encodeURIComponent(
-      `First Name: ${formData.firstName}\n` +
-      `Last Name: ${formData.lastName}\n` +
-      `Email: ${formData.email}\n` +
-      `Company: ${formData.company}\n` +
-      `Country: ${formData.country}\n` +
-      `Job Title: ${formData.jobTitle}\n` +
-      `Subject: ${formData.subject}\n` +
-      `Segment Interest: ${formData.segmentInterest.join(', ')}\n\n` +
-      `Message:\n${formData.message}\n\n` +
-      `Stay in touch: ${formData.stayInTouch ? 'Yes' : 'No'}`
-    );
-    
-    window.location.href = `mailto:juiwang@ucdavis.edu?subject=${subject}&body=${body}`;
+
+    setStatus('pending');
+    setStatusMessage(null);
+
+    try {
+      const res = await fetch('/api/submission', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const payload = await res.json().catch(() => null);
+        const errMsg = payload?.error || 'Unable to submit form. Please try again.';
+        throw new Error(errMsg);
+      }
+
+      setStatus('success');
+      setStatusMessage('Thanks! Your message has been sent and saved to our spreadsheet.');
+
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        company: '',
+        country: '',
+        jobTitle: '',
+        subject: '',
+        segmentInterest: [],
+        message: '',
+        stayInTouch: false,
+        privacyAcknowledged: false,
+      });
+    } catch (error) {
+      console.error(error);
+      setStatus('error');
+      setStatusMessage(String(error) || 'An unexpected error occurred.');
+    }
   };
 
   const handleCheckboxChange = (value: string) => {
@@ -71,6 +95,17 @@ export function Contact() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border-2" style={{ borderColor: '#D8CCB0' }}>
+          {statusMessage ? (
+            <div
+              className={`mb-6 rounded-lg px-4 py-3 text-sm ${
+                status === 'success'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-rose-50 text-rose-700 border border-rose-200'
+              }`}
+            >
+              {statusMessage}
+            </div>
+          ) : null}
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             {/* First Name */}
             <div>
@@ -283,12 +318,19 @@ export function Contact() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full md:w-auto px-12 py-4 text-white rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group"
+            disabled={status === 'pending'}
+            className={`w-full md:w-auto px-12 py-4 text-white rounded-lg font-bold text-lg transition-all duration-300 shadow-lg flex items-center justify-center gap-3 group ${
+              status === 'pending' ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-xl'
+            }`}
             style={{ backgroundColor: '#8F662E' }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#7A5626')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#8F662E')}
+            onMouseEnter={(e) => {
+              if (status !== 'pending') e.currentTarget.style.backgroundColor = '#7A5626';
+            }}
+            onMouseLeave={(e) => {
+              if (status !== 'pending') e.currentTarget.style.backgroundColor = '#8F662E';
+            }}
           >
-            SUBMIT
+            {status === 'pending' ? 'Sending...' : 'SUBMIT'}
             <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </form>
@@ -296,14 +338,7 @@ export function Contact() {
         {/* Footer note */}
         <div className="mt-8 text-center">
           <p className="text-sm text-stone-600">
-            By submitting this form, your information will be sent to{' '}
-            <a 
-              href="mailto:juiwang@ucdavis.edu" 
-              className="font-semibold hover:underline"
-              style={{ color: '#8F662E' }}
-            >
-              juiwang@ucdavis.edu
-            </a>
+            By submitting this form, your information will be stored securely and made available to the Co▪Matter team for follow-up.
           </p>
         </div>
       </div>
